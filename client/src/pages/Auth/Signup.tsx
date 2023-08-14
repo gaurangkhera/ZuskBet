@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Button } from "../../components/ui/button"
+import { Input } from "../../components/ui/input"
 import { useState } from "react"
 import axios from "axios"
 
@@ -17,6 +17,7 @@ const Signup = () => {
                 password: password
             });
             
+            window.location.href = '/'
             // Handle the response as needed
             console.log(response.data); // For example, log the response data
         } catch (error) {
@@ -27,8 +28,8 @@ const Signup = () => {
   return (
     <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8 mt-24">
       <div className="mx-auto max-w-lg text-center">
-        <h1 className="text-2xl font-bold sm:text-3xl">Sign in</h1>
-        <p className="mt-4 text-gray-500">Sign in with your BetX account.</p>
+        <h1 className="text-2xl font-bold sm:text-3xl">Sign up</h1>
+        <p className="mt-4 text-gray-500">Create a ZuskBet account here.</p>
       </div>
       <form className="mx-auto mb-0 mt-8 max-w-md space-y-4" onSubmit={handleSubmit}>
         <div>
@@ -51,7 +52,7 @@ const Signup = () => {
               </svg>
             </span>
           </div>
-          <div className="relative">
+          <div className="relative mt-2">
             <Input type='text' placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
             <span className="absolute inset-y-0 end-0 grid place-content-center px-4">
               <svg
@@ -91,8 +92,8 @@ const Signup = () => {
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-500 w-3/4">By signing in or creating an account, you agree to BetX's terms & conditions.</p>
-          <Button onClick={handleSubmit}>Sign in</Button>
+          <p className="text-sm text-gray-500 w-3/4">By signing in or creating an account, you agree to ZuskBet's terms & conditions.</p>
+          <Button onClick={handleSubmit}>Sign up</Button>
         </div>
       </form>
 

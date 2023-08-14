@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Button } from "../../components/ui/button"
+import { Input } from "../../components/ui/input"
 import { useState } from "react"
 import axios from "axios"
 
@@ -14,8 +14,8 @@ const Signin = () => {
                 email: email,
                 password: password
             });
-            
-            // Handle the response as needed
+
+            window.location.href = '/'
             console.log(response.data); // For example, log the response data
         } catch (error) {
             console.error('Error during registration:', error);
@@ -26,7 +26,7 @@ const Signin = () => {
     <div className="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8 mt-24">
       <div className="mx-auto max-w-lg text-center">
         <h1 className="text-2xl font-bold sm:text-3xl">Sign in</h1>
-        <p className="mt-4 text-gray-500">Sign in with your BetX account.</p>
+        <p className="mt-4 text-gray-500">Sign in with your ZuskBet account.</p>
       </div>
       <form className="mx-auto mb-0 mt-8 max-w-md space-y-4" onSubmit={handleSubmit}>
         <div>
@@ -70,7 +70,7 @@ const Signin = () => {
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-500 w-3/4">By signing in or creating an account, you agree to BetX's terms & conditions.</p>
+          <p className="text-sm text-gray-500 w-3/4">By signing in or creating an account, you agree to ZuskBet's terms & conditions.</p>
           <Button onClick={handleSubmit}>Sign in</Button>
         </div>
       </form>
