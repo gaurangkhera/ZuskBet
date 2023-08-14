@@ -1,16 +1,37 @@
 from app import app, bcrypt, db
 from flask import session, request, jsonify
-from app.models import User
+from app.models import User, Contestant, Bet
+import stripe
+import json
+
+stripe.api_key = app.config['STRIPE_SK']
 
 @app.route('/user', methods=['GET'])
 def return_user():
+    for i in Contestant.query.all()[:1]:
+        db.session.delete(i)
+        db.session.commit()
     user = User.query.filter_by(id=session['user']).first()
-    return jsonify({
-        "id": user.id,
-        "name": user.name,
-        "email": user.email
-    })
+    return user.return_json()
 
+@app.route('/addpay', methods=['POST'])
+def create_payment_intent():
+    amount = request.json['amount']
+    try:
+        intent = stripe.PaymentIntent.create(
+            amount=amount,
+            currency='inr'
+        )
+        return jsonify({'clientSecret': intent.client_secret})
+    except Exception as e:
+        return jsonify(error=str(e)), 500
+    
+@app.route('/addmoney', methods=['POST'])
+def addmoney():
+    amount = request.json['amount']
+    user = User.query.filter_by(id=session['user']).first()
+    user.money += float(amount)
+    return jsonify(200)
 @app.route("/login", methods=["POST"])
 def login_user():
     email = request.json["email"]
@@ -20,7 +41,7 @@ def login_user():
         return jsonify({"error": "Unauthorized"}), 404
     if not bcrypt.check_password_hash(user.password, password):
         return jsonify({"error": "Unauthorized"}), 403
-    session["user_id"] = user.id
+    session["user"] = user.id
     return jsonify({ "id": user.id, "email": user.email })
 
 @app.route("/register", methods=["POST"])
@@ -38,13 +59,58 @@ def register_user():
     new_user = User(email=email, password=hashed_password, username=username)
     db.session.add(new_user)
     db.session.commit()
-    session["user_id"] = new_user.id
+    session["user"] = new_user.id
     return jsonify({ "id": new_user.id, "email": new_user.email })
 
-@app.route('/logout')
+@app.route('/bet', methods=['POST'])
+def bet():
+    if not session['user']:
+        return jsonify(403)
+    amount = request.json['amount']
+    betfor = request.json['position']
+    print(betfor)
+    user = User.query.filter_by(id=session['user']).first()
+    user.money -= amount
+    bet = Bet(user=session['user'], amount=amount, betFor=betfor)
+    db.session.add(bet, user)
+    contestant = Contestant.query.filter_by(name=betfor).first()
+    print(contestant.id)
+    contestant.bets += 1
+    db.session.add(contestant)
+    db.session.commit()
+    print('BET SUCCESS')
+    return jsonify(200)
+
+    
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    payload = request.data
+    event = None
+
+    try:
+        event = stripe.Event.construct_from(
+            json.loads(payload), stripe.api_key
+        )
+    except ValueError as e:
+        # Invalid payload
+        return jsonify(success=False), 400
+
+    # Handle specific event types
+    if event.type == 'payment_intent.succeeded':
+        payment_intent = event.data.object
+        amount = payment_intent.amount / 100  # Convert from cents to your currency's unit
+
+        # Now you have the 'amount', you can update the user's wallet balance in your database
+        # Your wallet update logic here
+
+    # Return a response to acknowledge receipt of the event
+    return jsonify(success=True), 200
+
+@app.route('/logout', methods=['POST'])
 def logout():
     session.pop('user', None)
-    return 200
+    return jsonify(200)
 
 if __name__ == "__main__":
     app.run(debug=True)
