@@ -28,10 +28,9 @@ const Navbar = () => {
   return (
     <div className='fixed backdrop-blur-sm z-50 top-0 left-0 right-0 h-20 border-b border-slate-300 dark:border-slate-700 shadow-sm flex items-center justify-between'>
       <div className='container max-w-7xl mx-auto w-full flex justify-between items-center'>
-        <Link to='/' className={buttonVariants({ variant: 'ghost' })}>
-          <div className='font-black text-xl'>ZuskBet</div>
+        <Link to='/'>
+          <div className='font-black text-2xl'>ZuskBet</div>
         </Link>
-    <div className='w-3/4'><Link to="/bet" className={buttonVariants({ variant:"link"})}><span className='text-lg'>Bet</span></Link></div>
     <div className='w-3/4'><Link to="/bet" className={buttonVariants({ variant:"link"})}><span className='text-lg'>Bet</span></Link></div>
         <div className='hidden md:flex gap-4'>
           { !user ? <>
