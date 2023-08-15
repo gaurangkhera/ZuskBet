@@ -1,6 +1,6 @@
 from app import app, bcrypt, db
 from flask import session, request, jsonify
-from app.models import User, Contestant, Bet
+from main.models import User, Contestant, Bet
 import stripe
 import json
 
