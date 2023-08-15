@@ -1,4 +1,4 @@
-from app import app, bcrypt, db
+from main import app, bcrypt, db
 from flask import session, request, jsonify
 from main.models import User, Contestant, Bet
 import stripe
