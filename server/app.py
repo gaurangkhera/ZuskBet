@@ -8,9 +8,6 @@ stripe.api_key = app.config['STRIPE_SK']
 
 @app.route('/user', methods=['GET'])
 def return_user():
-    for i in Contestant.query.all()[:1]:
-        db.session.delete(i)
-        db.session.commit()
     user = User.query.filter_by(id=session['user']).first()
     return user.return_json()
 
@@ -31,7 +28,11 @@ def addmoney():
     amount = request.json['amount']
     user = User.query.filter_by(id=session['user']).first()
     user.money += float(amount)
+    db.session.add(user)
+    db.session.commit()
+    print(f"{amount} added to balance.")
     return jsonify(200)
+
 @app.route("/login", methods=["POST"])
 def login_user():
     email = request.json["email"]
@@ -70,16 +71,18 @@ def bet():
     betfor = request.json['position']
     print(betfor)
     user = User.query.filter_by(id=session['user']).first()
-    user.money -= amount
-    bet = Bet(user=session['user'], amount=amount, betFor=betfor)
-    db.session.add(bet, user)
-    contestant = Contestant.query.filter_by(name=betfor).first()
-    print(contestant.id)
-    contestant.bets += 1
-    db.session.add(contestant)
-    db.session.commit()
-    print('BET SUCCESS')
-    return jsonify(200)
+    if int(amount) <= int(user.money):
+        user.money -= amount
+        bet = Bet(user=session['user'], amount=amount, betFor=betfor)
+        db.session.add(bet, user)
+        contestant = Contestant.query.filter_by(name=betfor).first()
+        print(contestant.id)
+        contestant.bets += 1
+        db.session.add(contestant)
+        db.session.commit()
+        print('BET SUCCESS')
+        return jsonify(200)
+    return jsonify(404)
 
     
 
@@ -106,6 +109,11 @@ def webhook():
 
     # Return a response to acknowledge receipt of the event
     return jsonify(success=True), 200
+
+@app.route('/leaderboard')
+def lb():
+    contestants = [x.return_json() for x in Contestant.query.all()]
+    return contestants
 
 @app.route('/logout', methods=['POST'])
 def logout():

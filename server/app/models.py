@@ -14,14 +14,16 @@ class User(db.Model):
     email = db.Column(db.String(345), unique=True)
     password = db.Column(db.String, nullable=False)
     money = db.Column(db.Integer, default=0)
-    bet = db.relationship('Bet')
+    bets = db.relationship('Bet')
 
     # method to return user object as json to populate react state
     def return_json(self):
         return {
             "id": self.id,
             "username": self.username,
-            "email": self.email
+            "email": self.email,
+            "money": self.money,
+            "bets": [x.return_json() for x in self.bets],
         }
     
 # contestant schema
