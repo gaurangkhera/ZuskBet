@@ -31,7 +31,8 @@ const Navbar = () => {
         <Link to='/'>
           <div className='font-black text-2xl'>ZuskBet</div>
         </Link>
-    <div className='w-3/4'><Link to="/bet" className={buttonVariants({ variant:"link"})}><span className='text-lg'>Bet</span></Link></div>
+        <div><Link to="/bet" className={buttonVariants({ variant:"link"})}><span className='text-lg'>Bet</span></Link></div>
+        <div className='w-3/5'><Link to="/bet" className={buttonVariants({ variant:"link"})}><span className='text-lg'>Leaderboard</span></Link></div>
         <div className='hidden md:flex gap-4'>
           { !user ? <>
             <Link
