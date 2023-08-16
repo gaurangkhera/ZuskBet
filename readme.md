@@ -1,3 +1,6 @@
+# Promo
+https://youtu.be/tDNwYgeqz5o
+
 # Setup
 ## Instructions
 Clone the repository.
